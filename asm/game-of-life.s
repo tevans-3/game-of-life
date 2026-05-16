@@ -3,7 +3,7 @@
 .word 0xffffded3   # header 
 .byte 0x42         # type 
 .byte 1            # size 
-.half 0x0003   # data 
+.half 0x0003       # data 
 
 .byte 0x44         # type  
 .byte 2            # size 
@@ -21,4 +21,5 @@ _entry_point:
 
 .section .data 
 
-.section .bss 
+.section .bss
+
