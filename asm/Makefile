@@ -12,6 +12,7 @@ TARGET := game-of-life
 SRC := game-of-life.s
 
 all: $(TARGET).uf2
+elf: $(TARGET).elf
 
 %.o: %.s
 	$(AS) $(ASFLAGS) -o $@ $<
@@ -20,7 +21,7 @@ all: $(TARGET).uf2
 	$(LD) $(LDFLAGS) -o $@ $<
 
 %.uf2: %.elf
-	elf2uf2-rs $< $@
+	picotool uf2 convert $< $@ --family rp2350-riscv
 
 clean:
 	rm -rf *.o *.elf *.bin *.uf2
