@@ -27,7 +27,8 @@ At this point, only core 0 is active. The only running clock is the default Ring
 
 There's some rigmarole involved in toolchain setup. If you feel like skipping all that, you can jus clone this repo, delete the finished assembly files, and use the existing toolchain. Because we need to run our code on a separate device, there's a final flash step, where we port the machine code (an ELF file) onto the Pico. Before we can do that, we have to convert it into a bootable format, which in this case is Microsoft's uf2, or USB Flashing Format. With this, we can just drag and drop the file onto the RP2350. The flow, as you can see in the provided Makefile, is .s -> .ld -> .elf -> .uf2. The repo contains a file "preflight checklist.md" that lists all the toolchain dependencies you'll need to install. At this point, you should go make sure you have all the stuff in that file.  
 
-Once you've emerged from the depths of hell, you're ready to begin writing assembly. :) The first thing we need to do is define stack regions for both cores by setting stack pointers. That will involve setting a stack pointer on the first core, then syn
 
+======================
+Once you've emerged from the depths of hell, you're ready to begin writing assembly. :) Well, not quite. First, we have to wire up our board. There's an extraordinarily helpful page in the Waveshare matrix documentation that tells you exactly how to map colored jumper cables on the IDC connector to the Pico's GPIO pins. I highly recommend using that (that is to say, RTFM :). I definitely didn't spend an hour trying to figure out which cable to put where by visual inspection, which boiled down to a lot of slackjawed, furrowed-brow staring into the depths of futility, before thinking "Hmm, I wonder if I should check Waveshare's documentation..." Anyway. 
 
 
