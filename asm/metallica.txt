@@ -4,7 +4,7 @@ Metallica Hell Yes: Handwriting RISC-V Assembly for Fun and Profit
 { FUN - THEY MIGHT BE GIANTS - WILLIAM ALLEN WHITE https://tenor.com/view/tmbg-they-might-be-giants-william-allen-white-dont-lets-start-gif-26258581} This is what fun looks like.  
 
 You probably won't make any money from handwriting RISC-V assembly, and if you're like me and 
-don't have a brain you won't profit by learning much either. You can't run your brain through a brain stretcher if you don't have one. So why even bother doing this? B-b-because-- 
+don't have a brain you won't profit by learning much either. (As proof of brainlessness, I submit that I decided to write this in assembly <i>before Rust</i>, because YOLO.) You can't run your brain through a brain stretcher if you don't have one. So why even bother doing this? B-b-because-- 
 
 { BEAVIS AND BUTTHEAD - METAL GIF https://tenor.com/view/beavis-and-butt-head-butthead-beavis-headbang-rock-gif-12248731940596390156} Anticipate lots of headbanging (yours, on your keyboard). 
 
@@ -31,4 +31,4 @@ There's some rigmarole involved in toolchain setup. If you feel like skipping al
 ======================
 Once you've emerged from the depths of hell, you're ready to begin writing assembly. :) Well, not quite. First, we have to wire up our board. There's an extraordinarily helpful page in the Waveshare matrix documentation that tells you exactly how to map colored jumper cables on the IDC connector to the Pico's GPIO pins. I highly recommend using that (that is to say, RTFM :). I definitely didn't spend an hour trying to figure out which cable to put where by visual inspection, which boiled down to a lot of slackjawed, furrowed-brow staring into the depths of futility, before thinking "Hmm, I wonder if I should check Waveshare's documentation..." Anyway. 
 
-
+Sadly, I didn't follow my advice in the previous paragraph, and spent some time flailing around trying to configure GPIO pins in assembly code before deciding to look at the RP2350's manual. That manual has this to say: QUOTE<The mutable state visible to the programmer consists of: The 31 x 32-bit integer general-purpose registers (GPRs), named x1 through x31, - the program counter pc, which points to the beginning of the current instruction in memory, - the control and status registers (CSRs), which configure processor behavior and are used in trap handling, - the local monitor bit, which helps maintain correctness of atomic read-modify-write sequences, - the current privilege level, which determines which memory locations the core can access, which CSRs it can access, and which instructions it can execute  
