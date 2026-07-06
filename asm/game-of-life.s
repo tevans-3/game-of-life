@@ -4,13 +4,19 @@
 # https://www.weigu.lu/microcontroller/pico2_risc-v_ass/index.html
 # https://github.com/wolfmanjm/RISC-V-RP2350-baremetal/blob/master/libsrc/gpio.s
 
+### IMAGE DEF BLOCK 
+### This code block is required for the RP2350 to recognize the binary 
+### as a valid executable. 
+### RP2350: 5.9.1 Blocks and block loops 
+### RP2350: 5.9.3 Image definition items 
 .section .embedded_block
+.p2align 8 
 .word 0xffffded3   # header 
 
 .word 0x11010142   
 .word 0x00000344 
 .word _entry_point
-.word _stack_top 
+.word _core0_stack_top 
 .word 0x000004ff 
 .word 0x00000000 
 .word 0xab123579
@@ -56,17 +62,17 @@
 gpio_mask: 
     slli a0, a0, 1 
     ret 
-# Sets all the pins we need, mapped above, as output 
-set_pins: 
+# Sets a pin as output 
+set_pin: 
     addi sp, sp, -16 
     sd ra, 0(sp) 
 
-    li t0, GPIO_CTRL 
+    li t0, GPIO_OUT_DIR # this value specifies if this pin is for input or output
     lw t1, 0(t0)    # reload the value in the direction register  
     call gpio_mask 
     lw t2, 0(a0) 
     or t1, t1, t2 
-    sw t1, 0(t0) 
+    sw t1, 0(t0)    # stores the updated value back to the GPIO direction register  
 
     ld ra, 0(sp) 
     addi sp, sp, 16 
@@ -77,7 +83,7 @@ set_pins:
 # Input:  a0 = a GPIO register to identify 
 # Output: a0 = GPIO_PIN*8 + 4 
 gpio_offset: 
-    mul a0, a0, 0x8 
+    muli a0, a0, 0x8 
     add a0, a0, 0x4 
     ret
 
@@ -87,8 +93,8 @@ _entry_point:
         wfi 
         j _start 
 
-        .section .text 
-        .global main
+    .section .text 
+    .global main
 
 main: 
     # need to tell the multiplexer to set our pins to GPIO 
@@ -98,31 +104,58 @@ main:
     ori t1, t1, 5 # this sets the function select to 5 for GPIO mode 
     sw t1, 0(t0)  # GPIO mode is now selected in GPIO_CTRL  
 
-    # every pin we're using needs to be set as an output 
-    li t0, GPIO_DIR # this pin specifies whether a pin is input or output 
-    lw t1, 0(t0)    # the current value in the direction register   
-    lw a0, GPIO_R1 
-    call gpio_mask 
-    lw t2, 0(a0)    # load the masked GPIO pin into register t1 
-    or t1, t1, t2  
-    sw t1, 0(t0)    # stores the updated value back to the GPIO direction register
+    # every pin we're using needs to be set as an output
+    li t1,  GPIO_R1 
+    lw a0,  0(t1)  
+    call set_pin 
 
-    lw t1, 0(t0)    # reload the value in the direction register 
-    lw a0, GPIO_G1 
-    call gpio_mask 
-    lw t2, 0(a0) 
-    or t1, t1, t2 
-    sw t1, 0(t0) 
-
-    lw t1, 0(t0)    # reload the value in the direction register 
-    lw a0, GPIO_G1 
-    call gpio_mask 
-    lw t2, 0(a0) 
-    or t1, t1, t2 
-    sw t1, 0(t0) 
+    li t1,  GPIO_G1
+    lw a0,  0(t1) 
+    call set_pin 
     
+    li t1,  GPIO_B1
+    lw a0,  0(t1) 
+    call set_pin 
 
+    li t1,  GPIO_R2
+    lw a0,  0(t1) 
+    call set_pin 
 
+    li t1,  GPIO_G2
+    lw a0,  0(t1) 
+    call set_pin 
 
-    j main 
+    li t1,  GPIO_B2
+    lw a0,  0(t1) 
+    call set_pin 
+
+    li t1,  GPIO_A
+    lw a0,  0(t1) 
+    call set_pin
+
+    li t1,  GPIO_B
+    lw a0,  0(t1) 
+    call set_pin 
+    
+    li t1,  GPIO_C 
+    lw a0,  0(t1) 
+    call set_pin 
+    
+    li t1,  GPIO_D
+    lw a0,  0(t1) 
+    call set_pin 
+
+    # clear pad isolation for GPIO 
+    li t0, PAD_ISO_REG 
+    lw t1, 0(t0) 
+    andi t1, t1, ~0x100 
+    ori t1, t1, 0x30 
+    sw t1, 0(t0) 
+    li t0, GPIO_OUT_XOR 
+    li t1, GPIO_R1 
+
+mainloop: 
+    sw t1, 0(t0)
+
+    j mainloop 
     
