@@ -1,2 +1,2 @@
 # game-of-life
-Two versions of John Conway's Game of LIfe, one RISC-V, one RUST, running on a Raspberry Pi Pico.
+A temperature-controlled Game of Life (using thermistors) with potentiometer generation controls. And you can run generations in forward and reverse.
