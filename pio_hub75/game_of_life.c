@@ -1,3 +1,4 @@
+
 #include "game_of_life.h"
 
 static bool cell_exists(uint16_t x, uint16_t y) { 
@@ -55,11 +56,11 @@ static bool cell_is_live(uint16_t x, uint16_t y) {
 }
 
 static void cell_mark_dead(uint16_t x, uint16_t y) { 
-    if (cell_exists(x, y)) cell_states[x][y] = 0; 
+    if (cell_exists(x, y)) scratch_cell_states[x][y] = 0; 
 }
 
 static void cell_mark_live(uint16_t x, uint16_t y) { 
-    if (cell_exists(x, y)) cell_states[x][y] = 1; 
+    if (cell_exists(x, y)) scratch_cell_states[x][y] = 1; 
 }
 
 static void board_init(void) { 
@@ -84,6 +85,20 @@ static void board_init(void) {
             }
         }
     }
+}
+
+/*  Copy over the temporary cell states from the scratchpad array 
+ *  into the live cell_states array. 
+ *
+ *  @param N/A 
+ *  @return N/A 
+ */ 
+static void finalize_step(void) { 
+    for (uint16_t i = 0; i < HEIGHT; i++) { 
+        for (uint16_t j = 0; j < WIDTH; j++) { 
+            cell_states[i][j] = scratch_cell_states[i][j]; 
+        } 
+    } 
 }
 
 static void generate(void) { 
@@ -244,7 +259,7 @@ int main() {
     stdio_init_all();
     pot_init();   
     thermistor_init(); 
-    //board_init();
+    if (RANDOM_INIT_MODE) board_init();
     hub75_matrix_init(); 
 
     while (1) {
